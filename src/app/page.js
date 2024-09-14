@@ -1,9 +1,9 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-const API_URL = 'http://localhost:5001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const captureNote = async (title, noteContent, selectedCategory, fetchNotes, setTitle, setNoteContent, setSelectedCategory) => {
   if (noteContent.trim()) {
@@ -41,7 +41,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchNotes();
-  }, [router.asPath]);
+  }, [router.asPath, API_URL]);
 
   const fetchNotes = async () => {
     try {
@@ -139,7 +139,7 @@ export default function Home() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [title, noteContent, selectedCategory]);
+  }, [title, noteContent, selectedCategory, API_URL]);
 
   useEffect(() => {
     console.log('categoryDropdownRef:', categoryDropdownRef.current);
@@ -199,7 +199,7 @@ export default function Home() {
           </header>
           <div className="px-4 sm:px-6 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
             <div className="flex flex-col w-full max-w-[960px]">
-              <h2 className="text-[#111418] text-xl sm:text-[22px] font-bold leading-tight tracking-[-0.015em] px-2 sm:px-4 pb-3 pt-5">What's on your mind?</h2>
+              <h2 className="text-[#111418] text-xl sm:text-[22px] font-bold leading-tight tracking-[-0.015em] px-2 sm:px-4 pb-3 pt-5">What&apos;s on your mind?</h2>
               <div className="flex flex-wrap items-end gap-4 px-2 sm:px-4 py-3">
                 <input
                   id="note-title"

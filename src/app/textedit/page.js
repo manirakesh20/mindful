@@ -77,7 +77,7 @@ const TextEditor = () => {
         try {
           const response = await axios.get(`${API_URL}/notes/${id}`);
           const note = response.data;
-          console.log('Fetched note:', note); // Add this line
+          console.log('Fetched note:', note);
           if (note) {
             setTitle(note.title);
             setContent(note.content);
@@ -93,7 +93,7 @@ const TextEditor = () => {
     };
 
     fetchNote();
-  }, []);
+  }, [API_URL]);
 
   const saveNote = useCallback(async (shouldNavigate = false) => {
     const newNote = {
@@ -101,7 +101,7 @@ const TextEditor = () => {
       content: content,
       category: selectedCategory || 'Others',
     };
-    console.log('Saving note:', newNote); // Add this line
+    console.log('Saving note:', newNote);
 
     try {
       if (noteId) {
@@ -117,7 +117,7 @@ const TextEditor = () => {
     } catch (error) {
       console.error('Error saving note:', error);
     }
-  }, [title, content, selectedCategory, router, noteId]);
+  }, [title, content, selectedCategory, router, noteId, API_URL]);
 
   const debouncedSave = useCallback(
     debounce(() => {
@@ -129,13 +129,17 @@ const TextEditor = () => {
   );
 
   useEffect(() => {
+    debouncedSave();
+  }, [title, content, debouncedSave]);
+
+  useEffect(() => {
     if (title || content) {
       debouncedSave();
     }
     return () => {
       debouncedSave.cancel();
     };
-  }, [title, content, selectedCategory, debouncedSave]);
+  }, [title, content, selectedCategory, debouncedSave, router, noteId, API_URL]);
 
   const handleBackClick = () => {
     debouncedSave.cancel();
